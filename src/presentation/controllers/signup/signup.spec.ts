@@ -1,14 +1,42 @@
+import { Account } from '../../../domain/models/account'
+import { CreateAccount, CreateAccountModel } from '../../../domain/usecases/create-account'
+import { InternalServerError } from '../../errors/internal-server-error'
 import { InvalidParamError } from '../../errors/invalid-param-error'
 import { MissingParamError } from '../../errors/missing-param-error'
 import { SignUpController } from './signup'
 
-const makeSut = (): SignUpController => {
-  return new SignUpController()
+const makeCreateAccountStub = (): CreateAccount => {
+  class CreateAccountStub implements CreateAccount {
+    async create (account: CreateAccountModel): Promise<Account> {
+      return {
+        id: 'any_id',
+        login: 'any_login',
+        password: 'any_password'
+      }
+    }
+  }
+
+  return new CreateAccountStub()
+}
+
+interface SutTypes {
+  createAccountStub: CreateAccount
+  sut: SignUpController
+}
+
+const makeSut = (): SutTypes => {
+  const createAccountStub = makeCreateAccountStub()
+  const sut = new SignUpController(createAccountStub)
+
+  return {
+    sut,
+    createAccountStub
+  }
 }
 
 describe('SignUp Controller', () => {
   test('should return 400 if no login', async () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const response = await sut.handle({
       body: {
         password: 'any_password',
@@ -21,7 +49,7 @@ describe('SignUp Controller', () => {
   })
 
   test('should return 400 if no password', async () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const response = await sut.handle({
       body: {
         login: 'any_login',
@@ -34,7 +62,7 @@ describe('SignUp Controller', () => {
   })
 
   test('should return 400 if no passwordConfirmation', async () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const response = await sut.handle({
       body: {
         login: 'any_login',
@@ -47,7 +75,7 @@ describe('SignUp Controller', () => {
   })
 
   test('should return 400 if password is diffent from the passwordConfirmation', async () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const response = await sut.handle({
       body: {
         login: 'any_login',
@@ -58,5 +86,57 @@ describe('SignUp Controller', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual(new InvalidParamError('passwordConfirmation'))
+  })
+
+  test('should call create account with correct values', async () => {
+    const { sut, createAccountStub } = makeSut()
+    const createSpy = jest.spyOn(createAccountStub, 'create')
+    const newAccount = {
+      login: 'any_login',
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
+    }
+
+    await sut.handle({
+      body: newAccount
+    })
+
+    expect(createSpy).toHaveBeenCalledWith({
+      login: 'any_login',
+      password: 'any_password'
+    })
+  })
+
+  test('should return new account created', async () => {
+    const { sut } = makeSut()
+    const response = await sut.handle({
+      body: {
+        login: 'any_login',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    })
+    const account = response.body
+
+    expect(account.id).toBeTruthy()
+  })
+
+  test('should return 500 if CreateAccount throws', async () => {
+    const { sut, createAccountStub } = makeSut()
+
+    jest.spyOn(createAccountStub, 'create').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const response = await sut.handle({
+      body: {
+        login: 'any_login',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    })
+
+    expect(response.statusCode).toBe(500)
+    expect(response.body).toEqual(new InternalServerError())
   })
 })
