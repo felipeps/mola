@@ -5,6 +5,7 @@
   "author": "Felipe Pereira <nfelipe.ps@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.6",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
@@ -33,6 +34,7 @@
     "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.38"
