@@ -1,19 +1,32 @@
-{
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5432,
-  "username": "postgres",
-  "password": "root",
-  "database": "molas-test",
-  "synchronize": true,
-  "logging": false,
-  "entities": [
-     "src/infra/db/typeorm/models/**/*.ts"
-  ],
-  "migrations": [
-     "src/infra/db/typeorm/migrations/**/*.ts"
-  ],
-  "cli": {
-   "migrationsDir": "src/infra/db/typeorm/migrations"
- }
-}
+[
+   {
+      "type": "postgres",
+      "host": "localhost",
+      "port": 5432,
+      "username": "postgres",
+      "password": "root",
+      "database": "molas-test",
+      "synchronize": true,
+      "logging": false,
+      "entities": [
+         "src/infra/db/typeorm/models/**/*.ts"
+      ],
+      "migrations": [
+         "src/infra/db/typeorm/migrations/**/*.ts"
+      ],
+      "cli": {
+         "migrationsDir": "src/infra/db/typeorm/migrations"
+      }
+   },
+   {
+      "name": "test",
+      "type": "sqlite",
+      "database": ":memory:",
+      "dropSchema": true,
+      "entities": [
+         "src/infra/db/typeorm/models/**/*.ts"
+      ],
+      "synchronize": true,
+      "logging": false
+    }
+]
