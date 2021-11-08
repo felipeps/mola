@@ -31,6 +31,7 @@ const makeFindAccountRepository = (): FindAccountRepository => {
 interface SutTypes {
   sut: FindAccount
   findAccountRepository: FindAccountRepository
+  encrypter: Encrypter
 }
 
 const makeSut = (): SutTypes => {
@@ -40,7 +41,8 @@ const makeSut = (): SutTypes => {
 
   return {
     sut,
-    findAccountRepository
+    findAccountRepository,
+    encrypter
   }
 }
 
@@ -52,6 +54,15 @@ describe('DbFindAccount Usecase', () => {
     await sut.find('any_login', 'any_password')
 
     expect(findSpy).toBeCalledWith('any_login', 'hash_password')
+  })
+
+  test('should call encrypt correct value', async () => {
+    const { sut, encrypter } = makeSut()
+    const encrypterSpy = jest.spyOn(encrypter, 'encrypt')
+
+    await sut.find('any_login', 'any_password')
+
+    expect(encrypterSpy).toBeCalledWith('any_password')
   })
 
   test('should return result of find if it is null', async () => {
