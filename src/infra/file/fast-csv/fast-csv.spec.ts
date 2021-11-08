@@ -1,63 +1,33 @@
 import * as csv from 'fast-csv'
 import * as fs from 'fs'
+import path from 'path'
 import { FastCSVAdapter } from './fast-csv'
-
-jest.mock('fast-csv', () => ({
-  parse: jest.fn()
-}))
-
-jest.mock('fs', () => ({
-  unlinkSync: jest.fn().mockImplementationOnce((path: string) => {
-    return true
-  }),
-  createReadStream: jest.fn().mockImplementation(() => {
-    return {
-      pipe: jest.fn().mockImplementation(() => {
-        return {
-          on: jest.fn().mockImplementation(() => {
-            return {
-              on: jest.fn().mockImplementation(() => {
-                return {
-                  on: jest.fn()
-                }
-              })
-            }
-          })
-        }
-      })
-    }
-  })
-}))
 
 const makeSut = (): FastCSVAdapter => {
   return new FastCSVAdapter()
 }
 
 describe('FastCSV Adater', () => {
+  let filePath: string
+
+  beforeEach(() => {
+    filePath = path.join(__dirname, '..', '..', '..', 'uploads', 'test-file.csv')
+    fs.writeFileSync(filePath, 'COD_FORNECEDOR,COD_PROD\n345672,323')
+  })
+
   test('should call fast csv', async () => {
     const sut = makeSut()
     const parseSpy = jest.spyOn(csv, 'parse')
 
-    await sut.process('any_path')
+    await sut.process(filePath)
 
     expect(parseSpy).toHaveBeenCalledTimes(1)
   })
 
-  test('should call create read stream', async () => {
+  test('should return orders', async () => {
     const sut = makeSut()
-    const createReadStreamSpy = jest.spyOn(fs, 'createReadStream')
+    const orders = await sut.process(filePath)
 
-    await sut.process('any_path')
-
-    expect(createReadStreamSpy).toHaveBeenCalledTimes(2)
-  })
-
-  test('should call unlink with correct value', async () => {
-    const sut = makeSut()
-    const unlinkSyncSpy = jest.spyOn(fs, 'unlinkSync')
-
-    await sut.process('any_path')
-
-    expect(unlinkSyncSpy).toHaveBeenLastCalledWith('any_path')
+    expect(orders.length).toBe(1)
   })
 })
