@@ -1,7 +1,9 @@
 import { Account } from '../../../domain/models/account'
 import { CreateAccount, CreateAccountModel } from '../../../domain/usecases/create-account'
+import { FindAccount } from '../../../domain/usecases/find-account'
 import { InternalServerError } from '../../errors/internal-server-error'
 import { InvalidParamError } from '../../errors/invalid-param-error'
+import { LoginAlreadyExistsError } from '../../errors/login-already-exists-error'
 import { MissingParamError } from '../../errors/missing-param-error'
 import { SignUpController } from './signup'
 
@@ -19,18 +21,31 @@ const makeCreateAccountStub = (): CreateAccount => {
   return new CreateAccountStub()
 }
 
+const makeFindAccount = (): FindAccount => {
+  class FindAccountStub implements FindAccount {
+    async find (login: string): Promise<Account> {
+      return undefined
+    }
+  }
+
+  return new FindAccountStub()
+}
+
 interface SutTypes {
   createAccountStub: CreateAccount
+  findAccountStub: FindAccount
   sut: SignUpController
 }
 
 const makeSut = (): SutTypes => {
   const createAccountStub = makeCreateAccountStub()
-  const sut = new SignUpController(createAccountStub)
+  const findAccountStub = makeFindAccount()
+  const sut = new SignUpController(createAccountStub, findAccountStub)
 
   return {
     sut,
-    createAccountStub
+    createAccountStub,
+    findAccountStub
   }
 }
 
@@ -138,5 +153,28 @@ describe('SignUp Controller', () => {
 
     expect(response.statusCode).toBe(500)
     expect(response.body).toEqual(new InternalServerError())
+  })
+
+  test('should return 400 if login already exists', async () => {
+    const { sut, findAccountStub } = makeSut()
+
+    jest.spyOn(findAccountStub, 'find').mockImplementationOnce(async (): Promise<Account> => {
+      return {
+        id: 'any_id',
+        login: 'any_login',
+        password: 'any_password'
+      }
+    })
+
+    const response = await sut.handle({
+      body: {
+        login: 'any_login',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual(new LoginAlreadyExistsError())
   })
 })
