@@ -14,11 +14,10 @@ export class AccountTypeORMRepository implements CreateAccountRepository, FindAc
     return account
   }
 
-  async find (login: string, password: string): Promise<Account> {
+  async find (login: string): Promise<Account> {
     const repository = getRepository(AccountTypeORM)
     const account = await repository.findOne({
-      login,
-      password
+      login
     })
 
     return account

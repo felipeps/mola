@@ -37,7 +37,7 @@ describe('Account TypeORM Repository', () => {
       password: 'hash_password'
     })
 
-    const account = await accountRepository.find('any_name', 'hash_password')
+    const account = await accountRepository.find('any_name')
 
     expect(account).toBeTruthy()
     expect(account.id).toBeTruthy()

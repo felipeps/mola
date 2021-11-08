@@ -9,6 +9,10 @@ const makeEncrypter = (): Encrypter => {
     async encrypt (data: string): Promise<string> {
       return await Promise.resolve('hash_password')
     }
+
+    async compare (data: string, hashedData: string): Promise<boolean> {
+      return true
+    }
   }
 
   return new EncrypterStub()
