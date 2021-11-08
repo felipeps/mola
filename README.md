@@ -16,6 +16,9 @@
         <p>CREATE DATABASE molas-teste;
 		
   * **Execute:**
+		<p> yarn typeorm migration:run
+		
+  * **Execute:**
 		<p>$ yarn start
         
         
