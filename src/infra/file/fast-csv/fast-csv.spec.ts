@@ -7,6 +7,9 @@ jest.mock('fast-csv', () => ({
 }))
 
 jest.mock('fs', () => ({
+  unlinkSync: jest.fn().mockImplementationOnce((path: string) => {
+    return true
+  }),
   createReadStream: jest.fn().mockImplementation(() => {
     return {
       pipe: jest.fn().mockImplementation(() => {
@@ -31,7 +34,7 @@ const makeSut = (): FastCSVAdapter => {
 }
 
 describe('FastCSV Adater', () => {
-  test('Should call fast csv', async () => {
+  test('should call fast csv', async () => {
     const sut = makeSut()
     const parseSpy = jest.spyOn(csv, 'parse')
 
@@ -40,12 +43,21 @@ describe('FastCSV Adater', () => {
     expect(parseSpy).toHaveBeenCalledTimes(1)
   })
 
-  test('Should call create read stream', async () => {
+  test('should call create read stream', async () => {
     const sut = makeSut()
     const createReadStreamSpy = jest.spyOn(fs, 'createReadStream')
 
     await sut.process('any_path')
 
     expect(createReadStreamSpy).toHaveBeenCalledTimes(2)
+  })
+
+  test('should call unlink with correct value', async () => {
+    const sut = makeSut()
+    const unlinkSyncSpy = jest.spyOn(fs, 'unlinkSync')
+
+    await sut.process('any_path')
+
+    expect(unlinkSyncSpy).toHaveBeenLastCalledWith('any_path')
   })
 })

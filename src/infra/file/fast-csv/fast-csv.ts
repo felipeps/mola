@@ -13,6 +13,8 @@ export class FastCSVAdapter implements ProcessCSV {
       .on('data', row => orders.push(row))
       .on('end', (rowCount: number) => console.log(`Parsed ${rowCount} rows`))
 
+    fs.unlinkSync(filePath)
+
     return orders
   }
 }
