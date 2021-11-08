@@ -28,8 +28,6 @@ const FastCSVHelper = {
       }
     }
 
-    console.error(orderMapped)
-
     return orderMapped as CreateOrderModel
   }
 }

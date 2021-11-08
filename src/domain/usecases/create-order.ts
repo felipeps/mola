@@ -8,16 +8,16 @@ export interface CreateOrderModel {
   nome_prod: string
   nome_categoria: string
   nome_fornecedor: string
-  valor_original: number
+  valor_original: string
   data_compra: Date
-  valor_desconto: number
-  valor_final: number
+  valor_desconto: string
+  valor_final: string
   data_pgto: Date
   data_devolucao: Date
   status_situacao: string
   status_pgto: string
-  taxa_aplicada: number
-  taxa_original: number
+  taxa_aplicada: string
+  taxa_original: string
   id_file: string
 }
 

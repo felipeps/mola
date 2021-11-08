@@ -28,17 +28,17 @@ export class OrderTypeORM implements Order {
   @Column()
   nome_fornecedor: string
 
-  @Column()
-  valor_original: number
+  @Column({ type: 'numeric' })
+  valor_original: string
 
   @Column()
   data_compra: Date
 
-  @Column()
-  valor_desconto: number
+  @Column({ type: 'numeric' })
+  valor_desconto: string
 
-  @Column()
-  valor_final: number
+  @Column({ type: 'numeric' })
+  valor_final: string
 
   @Column()
   data_pgto: Date
@@ -52,16 +52,16 @@ export class OrderTypeORM implements Order {
   @Column()
   status_pgto: string
 
-  @Column()
-  taxa_aplicada: number
+  @Column({ type: 'numeric' })
+  taxa_aplicada: string
 
-  @Column()
-  taxa_original: number
+  @Column({ type: 'numeric' })
+  taxa_original: string
 
   @Column()
   id_file?: string
 
   @ManyToOne(() => FileTypeORM)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'id_file' })
   file?: string
 }
