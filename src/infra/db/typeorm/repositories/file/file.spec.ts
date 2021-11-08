@@ -16,7 +16,7 @@ describe('File TypeORM Repository', () => {
     return new FileTypeORMRepository()
   }
 
-  test('should return file account on success', async () => {
+  test('should return created file on success', async () => {
     const fileRepository = makeSut()
     const file = await fileRepository.create()
 

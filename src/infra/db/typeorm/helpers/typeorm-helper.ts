@@ -2,13 +2,20 @@ import { createConnection, getConnection } from 'typeorm'
 
 const TypeORMHelper = {
   async createTestConnection (modelToTest: any) {
+    let models: any[]
+
+    if (Array.isArray(modelToTest)) {
+      models = modelToTest
+    } else {
+      models = []
+      models.push(modelToTest)
+    }
+
     return await createConnection({
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [
-        modelToTest
-      ],
+      entities: models,
       synchronize: true,
       logging: false
     })

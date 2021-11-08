@@ -22,5 +22,5 @@ export interface CreateOrderModel {
 }
 
 export interface CreateOrder {
-  createBatch: (orders: CreateOrderModel[]) => Promise<Order[]>
+  createBatch: (ordersData: CreateOrderModel[]) => Promise<Order[]>
 }
