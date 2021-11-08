@@ -1,5 +1,4 @@
-import { Account } from '../../domain/models/account'
-import { FindAccount } from '../../domain/usecases/find-account'
+import { AccountFound, FindAccount } from '../../domain/usecases/find-account'
 import { FindAccountRepository } from '../protocols/find-account-repository'
 
 export class DbFindAccount implements FindAccount {
@@ -9,7 +8,7 @@ export class DbFindAccount implements FindAccount {
     this.findAccountRepository = findAccountRepository
   }
 
-  async find (login: string, password: string): Promise<Account> {
+  async find (login: string, password: string): Promise<AccountFound> {
     const account = await this.findAccountRepository.find(login, password)
 
     if (account) {

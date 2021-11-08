@@ -1,4 +1,5 @@
 import { Account } from '../../../domain/models/account'
+import { CreateJWT } from '../../../domain/protocols/create-jwt'
 import { FindAccount } from '../../../domain/usecases/find-account'
 import { AccountNotFoundError } from '../../errors/account-not-found-error'
 import { MissingParamError } from '../../errors/missing-param-error'
@@ -18,18 +19,31 @@ const makeFindAccountStub = (): FindAccount => {
   return new FindAccountStub()
 }
 
+const makeCreateJWTStub = (): CreateJWT => {
+  class CreateJWTStub implements CreateJWT {
+    async sign (secret: string, expiresIn: string, subject: string): Promise<string> {
+      return 'jwt'
+    }
+  }
+
+  return new CreateJWTStub()
+}
+
 interface SutTypes {
   sut: LoginController
   findAccount: FindAccount
+  createJWT: CreateJWT
 }
 
 const makeSut = (): SutTypes => {
   const findAccount = makeFindAccountStub()
-  const sut = new LoginController(findAccount)
+  const createJWT = makeCreateJWTStub()
+  const sut = new LoginController(findAccount, createJWT)
 
   return {
     sut,
-    findAccount
+    findAccount,
+    createJWT
   }
 }
 
@@ -109,7 +123,6 @@ describe('Login Controller', () => {
 
   test('should return account if it exists', async () => {
     const { sut } = makeSut()
-
     const response = await sut.handle({
       body: {
         login: 'any_login',
@@ -117,10 +130,35 @@ describe('Login Controller', () => {
       }
     })
 
-    expect(response.body).toEqual({
+    expect(response.body.account).toEqual({
       id: 'any_id',
       login: 'any_login',
       password: 'any_password'
     })
+  })
+
+  test('should call sign with correct values', async () => {
+    const { sut, createJWT } = makeSut()
+    const signSpy = jest.spyOn(createJWT, 'sign')
+    const response = await sut.handle({
+      body: {
+        login: 'any_login',
+        password: 'any_password'
+      }
+    })
+
+    expect(signSpy).toBeCalledWith('secret', '1d', response.body.account.id)
+  })
+
+  test('should return jwt if account exists', async () => {
+    const { sut } = makeSut()
+    const response = await sut.handle({
+      body: {
+        login: 'any_login',
+        password: 'any_password'
+      }
+    })
+
+    expect(response.body.jwt).toBeTruthy()
   })
 })

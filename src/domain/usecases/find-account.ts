@@ -1,5 +1,8 @@
-import { Account } from '../models/account'
+export interface AccountFound {
+  id: string
+  login: string
+}
 
 export interface FindAccount {
-  find: (login: string, password: string) => Promise<Account>
+  find: (login: string, password: string) => Promise<AccountFound>
 }
