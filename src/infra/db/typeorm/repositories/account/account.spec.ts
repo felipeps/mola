@@ -1,4 +1,3 @@
-import { CreateAccountRepository } from '../../../../../data/protocols/create-account-repository'
 import TypeORMHelper from '../../helpers/typeorm-helper'
 import { AccountTypeORM } from '../../models/account'
 import { AccountTypeORMRepository } from './account'
@@ -13,16 +12,32 @@ describe('Account TypeORM Repository', () => {
     return await TypeORMHelper.close()
   })
 
-  const makeSut = (): CreateAccountRepository => {
+  const makeSut = (): AccountTypeORMRepository => {
     return new AccountTypeORMRepository()
   }
 
-  test('should return account on success', async () => {
+  test('should return created account on success', async () => {
     const accountRepository = makeSut()
     const account = await accountRepository.create({
       login: 'any_name',
       password: 'hash_password'
     })
+
+    expect(account).toBeTruthy()
+    expect(account.id).toBeTruthy()
+    expect(account.login).toBeTruthy()
+    expect(account.password).toBeTruthy()
+  })
+
+  test('should return found account on success', async () => {
+    const accountRepository = makeSut()
+
+    await accountRepository.create({
+      login: 'any_name',
+      password: 'hash_password'
+    })
+
+    const account = await accountRepository.find('any_name', 'hash_password')
 
     expect(account).toBeTruthy()
     expect(account.id).toBeTruthy()
