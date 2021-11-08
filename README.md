@@ -6,14 +6,17 @@
   * [Docker Postgres](https://hub.docker.com/_/postgres)
   
 ## Passos para executar o projeto:
-  * Execute:
-        <p>**$ yarn**
+  * **Execute:**
+        <p>$ yarn
         
-  * Crie o banco de dados postgre na porta 5432. Pelo docker, execute:
-        <p>**$ docker run -p 5432:5432 --name molas-db -e POSTGRES_PASSWORD=root -d postgres**
+  * **Crie o banco de dados postgre na porta 5432. Pelo docker, execute:**
+        <p>$ docker run -p 5432:5432 --name molas-db -e POSTGRES_PASSWORD=root -d postgres
         
-  * Crie uma database chamada molas-test:
-        <p>**CREATE DATABASE molas-teste;**
+  * **Crie uma database chamada molas-test:**
+        <p>CREATE DATABASE molas-teste;
+		
+  * **Execute:**
+		<p>$ yarn start
         
         
 ## Rotas:
