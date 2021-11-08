@@ -13,7 +13,7 @@
         <p>$ docker run -p 5432:5432 --name molas-db -e POSTGRES_PASSWORD=root -d postgres
         
   * **Crie uma database chamada molas-test:**
-        <p>CREATE DATABASE molas-teste;
+        <p>CREATE DATABASE molas-test;
 		
   * **Execute:**
 		<p> yarn typeorm migration:run
