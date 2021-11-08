@@ -4,7 +4,7 @@ import { CreateAccountRepository } from '../protocols/create-account-repository'
 import { Encrypter } from '../protocols/encrypter'
 import { DbCreateAccount } from './db-create-account'
 
-const makeEncrypt = (): Encrypter => {
+const makeEncrypter = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt (data: string): Promise<string> {
       return await Promise.resolve('hash_password')
@@ -35,7 +35,7 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const encrypter = makeEncrypt()
+  const encrypter = makeEncrypter()
   const createAccountRepository = makeCreateAccountRepository()
   const sut = new DbCreateAccount(encrypter, createAccountRepository)
 

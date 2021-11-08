@@ -1,15 +1,26 @@
 import { Account } from '../../domain/models/account'
 import { FindAccount } from '../../domain/usecases/find-account'
+import { Encrypter } from '../protocols/encrypter'
 import { FindAccountRepository } from '../protocols/find-account-repository'
 import { DbFindAccount } from './db-find-account'
 
-const makeFindAccountRepositoryStub = (): FindAccountRepository => {
+const makeEncrypter = (): Encrypter => {
+  class EncrypterStub implements Encrypter {
+    async encrypt (data: string): Promise<string> {
+      return await Promise.resolve('hash_password')
+    }
+  }
+
+  return new EncrypterStub()
+}
+
+const makeFindAccountRepository = (): FindAccountRepository => {
   class FindAccountRepositoryStub implements FindAccountRepository {
     async find (login: string, password: string): Promise<Account> {
       return {
         id: 'any_id',
         login: 'any_login',
-        password: 'any_password'
+        password: 'hash_password'
       }
     }
   }
@@ -23,8 +34,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const findAccountRepository = makeFindAccountRepositoryStub()
-  const sut = new DbFindAccount(findAccountRepository)
+  const encrypter = makeEncrypter()
+  const findAccountRepository = makeFindAccountRepository()
+  const sut = new DbFindAccount(encrypter, findAccountRepository)
 
   return {
     sut,
@@ -39,7 +51,7 @@ describe('DbFindAccount Usecase', () => {
 
     await sut.find('any_login', 'any_password')
 
-    expect(findSpy).toBeCalledWith('any_login', 'any_password')
+    expect(findSpy).toBeCalledWith('any_login', 'hash_password')
   })
 
   test('should return result of find if it is null', async () => {
