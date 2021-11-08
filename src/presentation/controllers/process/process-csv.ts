@@ -1,6 +1,7 @@
 import { CreateFile } from '../../../domain/usecases/create-file'
 import { CreateOrder } from '../../../domain/usecases/create-order'
 import { ProcessCSV } from '../../../domain/usecases/process-csv'
+import FastCSVHelper from '../../../infra/file/fast-csv/fast-csv-helper'
 import { MissingParamError } from '../../errors/missing-param-error'
 import { badRequest, ok, serverError } from '../../helpers/http-helpers'
 import { Controller } from '../../protocols/controller'
@@ -31,8 +32,9 @@ export class ProcessCSVController implements Controller {
         ...order,
         id_file: file.id
       }))
+      const ordersMapped = ordersWithFile.map(FastCSVHelper.map)
 
-      await this.createOrder.createBatch(ordersWithFile)
+      await this.createOrder.createBatch(ordersMapped)
 
       return ok({
         message: 'Processed'
