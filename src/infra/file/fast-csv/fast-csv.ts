@@ -7,11 +7,15 @@ export class FastCSVAdapter implements ProcessCSV {
   async process (filePath: string): Promise<ProcessOrderModel[]> {
     const orders = []
 
-    fs.createReadStream(path.resolve(filePath))
-      .pipe(csv.parse({ headers: true }))
-      .on('error', error => console.error(error))
-      .on('data', row => orders.push(row))
-      .on('end', (rowCount: number) => console.log(`Parsed ${rowCount} rows`))
+    const data = new Promise(function (resolve, reject) {
+      fs.createReadStream(path.resolve(filePath))
+        .pipe(csv.parse({ headers: true }))
+        .on('error', error => console.error(error))
+        .on('data', row => orders.push(row))
+        .on('end', (rowCount: number) => resolve(rowCount))
+    })
+
+    await data
 
     fs.unlinkSync(filePath)
 
