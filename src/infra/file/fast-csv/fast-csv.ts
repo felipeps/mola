@@ -5,11 +5,14 @@ import { ProcessCSV, ProcessOrderModel } from '../../../domain/usecases/process-
 
 export class FastCSVAdapter implements ProcessCSV {
   async process (filePath: string): Promise<ProcessOrderModel[]> {
-    fs.createReadStream(path.resolve(__dirname, 'assets', 'parse.csv'))
+    const orders = []
+
+    fs.createReadStream(path.resolve(filePath))
       .pipe(csv.parse({ headers: true }))
       .on('error', error => console.error(error))
-      .on('data', row => console.log(row))
+      .on('data', row => orders.push(row))
       .on('end', (rowCount: number) => console.log(`Parsed ${rowCount} rows`))
-    return await Promise.resolve(null)
+
+    return orders
   }
 }
