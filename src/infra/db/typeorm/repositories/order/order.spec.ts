@@ -34,7 +34,7 @@ describe('Order TypeORM Repository', () => {
     }
   }
 
-  test('should return created orders on success', async () => {
+  test('should return created orders and retrieve on success', async () => {
     const { sut, createFileRepository } = makeSut()
     const file = await createFileRepository.create()
     const orders = await sut.createBatch([
@@ -59,8 +59,11 @@ describe('Order TypeORM Repository', () => {
         id_file: file.id
       }
     ])
+    const findOrder = await sut.find(orders[0].id)
 
     expect(orders.length).toBeTruthy()
     expect(orders[0].id).toBeTruthy()
+    expect(findOrder.id).toBeTruthy()
+    expect(findOrder.id).toBe(orders[0].id)
   })
 })
