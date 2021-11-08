@@ -3,8 +3,8 @@ import { FindAccount } from '../../domain/usecases/find-account'
 import { FindAccountRepository } from '../protocols/find-account-repository'
 import { DbFindAccount } from './db-find-account'
 
-const makeFindAccountRepositoryStub = (): FindAccount => {
-  class FindAccountRepositoryStub implements FindAccount {
+const makeFindAccountRepositoryStub = (): FindAccountRepository => {
+  class FindAccountRepositoryStub implements FindAccountRepository {
     async find (login: string, password: string): Promise<Account> {
       return {
         id: 'any_id',
@@ -18,7 +18,7 @@ const makeFindAccountRepositoryStub = (): FindAccount => {
 }
 
 interface SutTypes {
-  sut: DbFindAccount
+  sut: FindAccount
   findAccountRepository: FindAccountRepository
 }
 
