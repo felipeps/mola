@@ -21,7 +21,7 @@
   * **Execute:**
 		<p>$ yarn start
         
-  * **Dados de conexão padrão:**
+  * **Dados de conexão padrão (caso necessário alterar esses dados, altere no arquivo ormconfig.json):**
 		<p>username: postgres
 		<p>password: root
 		<p>database: molas-test
