@@ -9,7 +9,7 @@
   * **Execute:**
         <p>$ yarn
         
-  * **Crie o banco de dados postgre na porta 5432. Pelo docker, execute:**
+  * **Crie o banco de dados postgres na porta 5432. Pelo docker, execute:**
         <p>$ docker run -p 5432:5432 --name molas-db -e POSTGRES_PASSWORD=root -d postgres
         
   * **Crie uma database chamada molas-test:**
