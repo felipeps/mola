@@ -21,6 +21,11 @@
   * **Execute:**
 		<p>$ yarn start
         
+  * **Dados de conexão padrão:**
+		<p>username: postgres
+		<p>password: root
+		<p>database: molas-test
+			
         
 ## Rotas:
   #### GET localhost:3000/api/order/find/:id
